@@ -10,9 +10,22 @@ public class User {
 
     public User(Rol rol, String dni, String completeName, int age) {
         this.rol = rol;
-        this.dni = dni;
+        this.dni = refactorDni(dni);
         this.completeName = completeName;
         this.age = age;
         this.debt = 0;
+    }
+
+    public String refactorDni(String dni){
+       return this.rol == Rol.STUDENT ?  "S-" + dni :  "P-" + dni;
+    }
+
+    public  void printUserRegistration(){
+        System.out.println(
+                "¡Registration Completed \n\n" +
+                "ID: " + this.dni + "\n" +
+                "Name: " + this.completeName + "\n" +
+                "Age: " + this.age
+        );
     }
 }
