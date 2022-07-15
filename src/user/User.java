@@ -8,10 +8,11 @@ public class User {
     private int age;
     private double debt;
 
-
-
-
-
-
-
+    public User(Rol rol, String dni, String completeName, int age) {
+        this.rol = rol;
+        this.dni = dni;
+        this.completeName = completeName;
+        this.age = age;
+        this.debt = 0;
+    }
 }

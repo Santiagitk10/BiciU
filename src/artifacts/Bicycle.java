@@ -7,6 +7,10 @@ public class Bicycle {
     private String color;
     private boolean isAvailable;
 
-
-
+    public Bicycle(String idCode, BicycleType type, String color, boolean isAvailable) {
+        this.idCode = idCode;
+        this.type = type;
+        this.color = color;
+        this.isAvailable = isAvailable;
+    }
 }
