@@ -20,6 +20,18 @@ public class User {
        return this.rol == Rol.STUDENT ?  "S-" + dni :  "P-" + dni;
     }
 
+    public String getDni() {
+        return dni;
+    }
+
+    public double getDebt() {
+        return debt;
+    }
+
+    public void setDebt(double debt) {
+        this.debt = debt;
+    }
+
     public  void printUserRegistration(){
         System.out.println(
                 "¡Registration Completed \n\n" +
@@ -28,4 +40,6 @@ public class User {
                 "Age: " + this.age
         );
     }
+
+
 }

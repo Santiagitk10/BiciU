@@ -11,8 +11,9 @@ import java.util.regex.Pattern;
 public class UiMenu {
 
     Reader reader = new Reader();
+    DataSeeds dataseeds = new DataSeeds();
 
-    private List<User> users = new ArrayList<>();
+    private List<User> users = dataseeds.seedUsers();
 
 
 
@@ -40,7 +41,9 @@ public class UiMenu {
             switch (option){
                 case 1:
                     createUser();
-
+                    break;
+                case 2:
+                    borrowBicycle();
                     break;
             }
 
@@ -62,6 +65,10 @@ public class UiMenu {
 
         System.out.println("Enter the User´s DNI");
         String dni = reader.scannerText();
+        if(isUserAlreadyRegistered(dni)){
+            System.out.println("The User is already registered");
+            return;
+        }
 
         System.out.println("Enter the User´s complete name (Name Lastname) No accent maks");
         String completeName = reader.scannerText();
@@ -81,6 +88,24 @@ public class UiMenu {
         user.printUserRegistration();
         users.add(user);
 
+    }
+
+
+    public void borrowBicycle(){
+        System.out.println("En the User´s DNI");
+        String userDni = reader.scannerText();
+        if(!isUserAlreadyRegistered(userDni)){
+            System.out.println("The User is not registered. Go back and Create it");
+            return;
+        }
+
+        if(userHasDebt(userDni)){
+            System.out.println("User " + userDni + " has a ticket with debt. " +
+                    "Please cancel it and try again.");
+            return;
+        }
+
+
 
     }
 
@@ -93,6 +118,29 @@ public class UiMenu {
         }
         Matcher m = p.matcher(completeName);
         return m.matches();
+    }
+
+
+
+    public boolean userHasDebt(String userDni){
+        for(User user: users){
+            if(user.getDni().equals("S-" + userDni) || user.getDni().equals("P-" + userDni) && user.getDebt() > 0){
+               return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+
+    public boolean isUserAlreadyRegistered(String dni){
+        for(User user: users){
+            if(user.getDni().equals("S-" + dni) || user.getDni().equals("P-" + dni)){
+               return true;
+            }
+        }
+        return false;
     }
 
 }
