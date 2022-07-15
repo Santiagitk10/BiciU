@@ -1,8 +1,8 @@
 package biciU;
 
-public class biciU {
+public class BiciU {
 
     public static void main(String[] args) {
-        System.out.println("Working");
+
     }
 }
