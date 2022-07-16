@@ -3,10 +3,13 @@ package ui;
 import artifacts.Bicycle;
 import artifacts.BicycleType;
 import artifacts.Ticket;
+import artifacts.TicketStatus;
 import user.Rol;
 import user.User;
 
 import java.io.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -140,27 +143,114 @@ public class UiMenu {
 
 
 
-    public void writeTicketsToTxt(){
+
+
+    public void readTicketsFromTxt(){
+        tickets.clear();
+        /*BicycleType requestedType = BicycleType.ROAD;
+        if(chosenBicycleType.equals("M")){
+            requestedType = BicycleType.MOUNTAIN;
+        }*/
+
         String filePath = "C:\\Users\\SANTIAGO SIERRA\\IdeaProjects\\BiciU\\src\\utilities\\tickets.txt";
+        String currentLine;
+        String data[];
+/*        Bicycle returnBike = null;*/
 
         try {
-            FileWriter fw = new FileWriter(filePath);
-            BufferedWriter bw = new BufferedWriter(fw);
+            FileReader fr = new FileReader(filePath);
+            BufferedReader br = new BufferedReader(fr);
 
-            for(Ticket ticket: tickets){
+            while((currentLine = br.readLine()) != null){
+                data = currentLine.split(";");
 
-                bw.write(ticket.getTicketCode() + ";" + ticket.getAssignedBicycle().getIdCode() +
-                        ";" + ticket.getUser().getDni() + ";" + ticket.getUser().getCompleteName() + ";" +
-                        ticket.getDate() + ";" + ticket.getStartTime() + ";" + ticket.getEndTime() +
-                        ";" + ticket.isHasHelmet() + ";" + ticket.isBicycleOk() + ";" + ticket.getTicketStatus() +
-                        ";" + ticket.getUser().getDebt() + "\n");
+                LocalDate localDate = LocalDate.parse(data[4]);
+                LocalTime startTime = LocalTime.parse(data[5]);
+                LocalTime endTime = LocalTime.parse(data[6]);
+                boolean isHelmetOk = true;
+                if(data[7].equals("false")){
+                    isHelmetOk = false;
+                }
+                boolean isBikeOk = true;
+                if(data[8].equals("false")){
+                    isBikeOk = false;
+                }
+                TicketStatus status = TicketStatus.ACTIVE;
+                if(data[9].equals("PENDING")){
+                    status = TicketStatus.PENDING;
+                } else if(data[9].equals("OK")){
+                    status = TicketStatus.OK;
+                }
+                double debt = Double.parseDouble(data[10]);
+
+                Ticket ticket = new Ticket(data[0],data[1],data[2],data[3],localDate,startTime,endTime,isHelmetOk,isBikeOk,status,debt);
+                tickets.add(ticket);
+
             }
 
-            bw.close();
+            /*br.close();
+
+            boolean found = false;
+
+            for(Bicycle bike: bicycles){
+                if(bike.getType().equals(requestedType) && bike.isAvailable()){
+                    bike.displayBicycleSelection();
+                    bike.setAvailable(false);
+                    found = true;
+                    returnBike = bike;
+                    updateBicycleTxtFile();
+                    break;
+                }
+
+            }
+
+            if(!found){
+                System.out.println("There are no " + requestedType + " bicycles available" +
+                        " Try with other type or come back later");
+                return null;
+
+            }*/
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+      /*  return returnBike;*/
+    }
+
+
+
+
+
+
+    public void writeTicketsToTxt(){
+        String filePath = "C:\\Users\\SANTIAGO SIERRA\\IdeaProjects\\BiciU\\src\\utilities\\tickets.txt";
+
+
+                try {
+                    FileWriter fw2 = new FileWriter(filePath);
+                    BufferedWriter bw2 = new BufferedWriter(fw2);
+
+                    for(Ticket ticket: tickets){
+
+                        bw2.write(ticket.getTicketCode() + ";" + ticket.getBicycleCode() +
+                                ";" + ticket.getUserId() + ";" + ticket.getUserName() + ";" +
+                                ticket.getDate() + ";" + ticket.getStartTime() + ";" + ticket.getEndTime() +
+                                ";" + ticket.isHasHelmet() + ";" + ticket.isBicycleOk() + ";" + ticket.getTicketStatus() +
+                                ";" + ticket.getUser().getDebt() + "\n");
+                    }
+
+                    bw2.close();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+
+
     }
 
 

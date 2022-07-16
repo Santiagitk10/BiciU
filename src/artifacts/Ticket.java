@@ -10,7 +10,10 @@ public class Ticket {
     private static int ticketCodeCounter;
     private String ticketCode;
     private Bicycle assignedBicycle;
+    private String bicycleCode;
     private User user;
+    private String userId;
+    private String userName;
     private double amountToPay;
     private TicketStatus ticketStatus;
     private boolean hasHelmet;
@@ -21,15 +24,38 @@ public class Ticket {
 
 
     public Ticket(Bicycle assignedBicycle, User user) {
+        this.ticketCode = createTicketCode();
         this.assignedBicycle = assignedBicycle;
+        this.bicycleCode = this.assignedBicycle.getIdCode();
         this.user = user;
+        this.userId = this.user.getDni();
+        this.userName = this.user.getCompleteName();
+        this.amountToPay = this.user.getDebt();
         this.date = LocalDate.now();
         this.startTime = LocalTime.now();
-        this.ticketCode = createTicketCode();
         this.hasHelmet = true;
         this.isBicycleOk = true;
         this.ticketStatus = TicketStatus.ACTIVE;
     }
+
+    public Ticket(String ticketCode, String bicycleCode, String userId,
+                  String userName, LocalDate date, LocalTime startTime, LocalTime endTime,
+                  boolean hasHelmet, boolean isBicycleOk,
+                  TicketStatus ticketStatus, double amountToPay) {
+
+        this.ticketCode = ticketCode;
+        this.bicycleCode = bicycleCode;
+        this.userId = userId;
+        this.userName = userName;
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.hasHelmet = hasHelmet;
+        this.isBicycleOk = isBicycleOk;
+        this.ticketStatus = ticketStatus;
+        this.amountToPay = amountToPay;
+    }
+
 
     public Bicycle getAssignedBicycle() {
         return assignedBicycle;
@@ -69,6 +95,18 @@ public class Ticket {
 
     public LocalTime getEndTime() {
         return endTime;
+    }
+
+    public String getBicycleCode() {
+        return bicycleCode;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public void setTicketStatus(TicketStatus ticketStatus) {
