@@ -14,6 +14,26 @@ public class Bicycle {
         this.isAvailable = isAvailable;
     }
 
+    public String getIdCode() {
+        return idCode;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public BicycleType getType() {
+        return type;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
     public void displayBicycleSelection(){
         System.out.println(
                 "Bicycle Chosen!\n" +
@@ -22,4 +42,6 @@ public class Bicycle {
                         "Color: " + this.color + "\n"
         );
     }
+
+
 }

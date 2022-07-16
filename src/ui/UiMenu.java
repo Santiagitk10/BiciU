@@ -8,7 +8,6 @@ import user.User;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -127,11 +126,10 @@ public class UiMenu {
 
     public void selectBicycle(String chosenBicycleType){
 
-        String requestedType = "";
+        bicycles.clear();
+        BicycleType requestedType = BicycleType.ROAD;
         if(chosenBicycleType.equals("M")){
-            requestedType = "Mountain";
-        } else if(chosenBicycleType.equals("R")) {
-            requestedType = "Road";
+            requestedType = BicycleType.MOUNTAIN;
         }
 
         String filePath = "C:\\Users\\SANTIAGO SIERRA\\IdeaProjects\\BiciU\\src\\utilities\\bicycleData.txt";
@@ -145,22 +143,39 @@ public class UiMenu {
             while((currentLine = br.readLine()) != null){
                 data = currentLine.split(";");
 
-                if(data[1].equals(requestedType) && data[3].equals("true")){
                     BicycleType bicycleType = BicycleType.MOUNTAIN;
                     if(data[1].equals("Road")){
                         bicycleType = BicycleType.ROAD;
                     }
+                    boolean available = true;
 
-                    Bicycle bicycle = new Bicycle(data[0],bicycleType,data[2], true);
+                    if(data[3].equals("false")){
+                        available = false;
+                    }
+
+                    Bicycle bicycle = new Bicycle(data[0],bicycleType,data[2], available);
                     bicycles.add(bicycle);
-                    bicycle.displayBicycleSelection();
-                    return;
-                }
+
             }
 
-            System.out.println("There are no " + requestedType + " bicycles available" +
-                    " Try with other type or come back later");
+            boolean found = false;
+            for(Bicycle bike: bicycles){
+                if(bike.getType().equals(requestedType) && bike.isAvailable()){
+                    bike.displayBicycleSelection();
+                    bike.setAvailable(false);
+                    found = true;
+                    updateBicycleTxtFile();
+                    break;
+                }
 
+            }
+
+            if(!found){
+                System.out.println("There are no " + requestedType + " bicycles available" +
+                        " Try with other type or come back later");
+            }
+
+            br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -168,6 +183,34 @@ public class UiMenu {
     }
 
 
+    public void updateBicycleTxtFile(){
+
+        String filePath = "C:\\Users\\SANTIAGO SIERRA\\IdeaProjects\\BiciU\\src\\utilities\\bicycleData.txt";
+
+        try {
+            FileWriter fw = new FileWriter(filePath);
+            BufferedWriter bw = new BufferedWriter(fw);
+/*            PrintWriter pw = new PrintWriter(bw);*/
+
+            for(Bicycle bike: bicycles){
+                String type = "Road";
+                String available = "false";
+                if(bike.getType().equals(BicycleType.MOUNTAIN)){
+                    type = "Mountain";
+                }
+                if(bike.isAvailable()){
+                    available = "true";
+                }
+                bw.write(bike.getIdCode() + ";" + type + ";" + bike.getColor() + ";" + available + "\n");
+            }
+
+            bw.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 
     public boolean isValidUserName(String completeName){
@@ -204,8 +247,6 @@ public class UiMenu {
     }
 
 }
-
-
 
 
 
