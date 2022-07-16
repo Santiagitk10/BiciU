@@ -31,6 +31,46 @@ public class Ticket {
         this.ticketStatus = TicketStatus.ACTIVE;
     }
 
+    public Bicycle getAssignedBicycle() {
+        return assignedBicycle;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public String getTicketCode() {
+        return ticketCode;
+    }
+
+    public double getAmountToPay() {
+        return amountToPay;
+    }
+
+    public TicketStatus getTicketStatus() {
+        return ticketStatus;
+    }
+
+    public boolean isHasHelmet() {
+        return hasHelmet;
+    }
+
+    public boolean isBicycleOk() {
+        return isBicycleOk;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
     public void setTicketStatus(TicketStatus ticketStatus) {
         this.ticketStatus = ticketStatus;
     }

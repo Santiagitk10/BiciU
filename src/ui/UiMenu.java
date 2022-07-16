@@ -19,7 +19,7 @@ public class UiMenu {
 
     private List<User> users = dataseeds.seedUsers();
     private List<Bicycle> bicycles = new ArrayList<>();
-    private List<Ticket> ticket = new ArrayList<>();
+    private List<Ticket> tickets = new ArrayList<>();
 
 
 
@@ -124,6 +124,8 @@ public class UiMenu {
                 returnedUser.setDebt(1.0);
                 Ticket ticket = new Ticket(returnedBike,returnedUser);
                 ticket.displayTicketInfo();
+                tickets.add(ticket);
+                writeTicketsToTxt();
 
             }
         } else {
@@ -135,6 +137,32 @@ public class UiMenu {
 
 
     }
+
+
+
+    public void writeTicketsToTxt(){
+        String filePath = "C:\\Users\\SANTIAGO SIERRA\\IdeaProjects\\BiciU\\src\\utilities\\tickets.txt";
+
+        try {
+            FileWriter fw = new FileWriter(filePath);
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            for(Ticket ticket: tickets){
+
+                bw.write(ticket.getTicketCode() + ";" + ticket.getAssignedBicycle().getIdCode() +
+                        ";" + ticket.getUser().getDni() + ";" + ticket.getUser().getCompleteName() + ";" +
+                        ticket.getDate() + ";" + ticket.getStartTime() + ";" + ticket.getEndTime() +
+                        ";" + ticket.isHasHelmet() + ";" + ticket.isBicycleOk() + ";" + ticket.getTicketStatus() +
+                        ";" + ticket.getUser().getDebt() + "\n");
+            }
+
+            bw.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 
@@ -216,7 +244,6 @@ public class UiMenu {
         try {
             FileWriter fw = new FileWriter(filePath);
             BufferedWriter bw = new BufferedWriter(fw);
-/*            PrintWriter pw = new PrintWriter(bw);*/
 
             for(Bicycle bike: bicycles){
                 String type = "Road";

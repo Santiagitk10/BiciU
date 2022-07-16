@@ -7,11 +7,11 @@ BIC-06;Road;red;false
 BIC-07;Mountain;red;false
 BIC-08;Road;blue;false
 BIC-09;Mountain;blue;false
-BIC-10;Road;purple;true
+BIC-10;Road;purple;false
 BIC-11;Road;yellow;true
 BIC-12;Mountain;blue;false
 BIC-13;Mountain;blue;false
-BIC-14;Mountain;red;true
+BIC-14;Mountain;red;false
 BIC-15;Road;yellow;true
 BIC-16;Road;yellow;true
 BIC-17;Road;red;true
