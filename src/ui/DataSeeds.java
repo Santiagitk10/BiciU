@@ -25,13 +25,13 @@ public class DataSeeds {
         return seedUsers;
     }
 
-    public List<Ticket> seedTickets(){
+    /*public List<Ticket> seedTickets(){
         List<Ticket> seedTickets = new ArrayList<>();
 
         Ticket ticket1 = new Ticket("T-000","BIC-16","S-9876","Rafa Nada", LocalDate.of(2022,07,16), LocalTime.of(11,02,50),null,true,true, TicketStatus.ACTIVE,1.0);
         seedTickets.add(ticket1);
 
         return seedTickets;
-    }
+    }*/
 
 }

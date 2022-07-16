@@ -1,1 +1,0 @@
-T-000;BIC-16;S-9876;Rafa Nada;2022-07-16;11:02:50.352618700;null;true;true;ACTIVE;1.0

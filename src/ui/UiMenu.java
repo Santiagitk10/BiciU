@@ -23,8 +23,8 @@ public class UiMenu {
 
     private List<User> users = dataseeds.seedUsers();
     private List<Bicycle> bicycles = new ArrayList<>();
-   /* private List<Ticket> tickets = new ArrayList<>();*/
-   private List<Ticket> tickets = dataseeds.seedTickets();
+    private List<Ticket> tickets = new ArrayList<>();
+/*   private List<Ticket> tickets = dataseeds.seedTickets();*/
 
 
 
@@ -62,7 +62,6 @@ public class UiMenu {
 
         } while(option != 6);
 
-
     }
 
 
@@ -94,12 +93,8 @@ public class UiMenu {
                 }
 
                 for(User user: users){
-                    System.out.println(user.getDni()); //TODO DELETE
-                    System.out.println(ticket.getUserId()); //TODO DELETE
-
 
                     if(user.getDni().equals(ticket.getUserId())){
-                        System.out.println("Here"); //TODO DELETE
                         if(!isHelmetOk){
                             user.increaseDebt(5);
                         }
@@ -128,12 +123,20 @@ public class UiMenu {
 
                         ticket.displayTicketInfo();
 
-                        //TODO ACTUALIZAR BICI STATUS Y ESCRIBIR TICKETS
+                        for(Bicycle bike: bicycles){
+                            if(bike.getIdCode().equals(ticket.getBicycleCode())){
+                                bike.setAvailable(true);
+                                break;
+                            }
+                        }
+
+                        updateBicycleTxtFile();
+                        writeTicketsToTxt();
+
                         break;
 
                     }
                 }
-
 
                 return;
             }
@@ -217,15 +220,12 @@ public class UiMenu {
             return;
         }
 
-
-
-
     }
 
 
 
 
-
+    //TODO FALTA TESTEARLA CUANDO SE LEAN LOS TICKETS PARA PAGARLOS
     public void readTicketsFromTxt(){
         tickets.clear();
         /*BicycleType requestedType = BicycleType.ROAD;
@@ -329,9 +329,6 @@ public class UiMenu {
                     e.printStackTrace();
                 }
 
-
-
-
     }
 
 
@@ -340,40 +337,15 @@ public class UiMenu {
 
     public Bicycle selectBicycle(String chosenBicycleType){
 
-        bicycles.clear();
         BicycleType requestedType = BicycleType.ROAD;
         if(chosenBicycleType.equals("M")){
             requestedType = BicycleType.MOUNTAIN;
         }
 
-        String filePath = "C:\\Users\\SANTIAGO SIERRA\\IdeaProjects\\BiciU\\src\\utilities\\bicycleData.txt";
-        String currentLine;
-        String data[];
         Bicycle returnBike = null;
 
-        try {
-            FileReader fr = new FileReader(filePath);
-            BufferedReader br = new BufferedReader(fr);
 
-            while((currentLine = br.readLine()) != null){
-                data = currentLine.split(";");
-
-                    BicycleType bicycleType = BicycleType.MOUNTAIN;
-                    if(data[1].equals("Road")){
-                        bicycleType = BicycleType.ROAD;
-                    }
-                    boolean available = true;
-
-                    if(data[3].equals("false")){
-                        available = false;
-                    }
-
-                    Bicycle bicycle = new Bicycle(data[0],bicycleType,data[2], available);
-                    bicycles.add(bicycle);
-
-            }
-
-            br.close();
+            readBicyclesTxtFile();
 
             boolean found = false;
 
@@ -397,15 +369,46 @@ public class UiMenu {
             }
 
 
+        return returnBike;
+    }
+
+
+
+    public void readBicyclesTxtFile(){
+        bicycles.clear();
+        String filePath = "C:\\Users\\SANTIAGO SIERRA\\IdeaProjects\\BiciU\\src\\utilities\\bicycleData.txt";
+        String currentLine;
+        String data[];
+
+        try {
+            FileReader fr = new FileReader(filePath);
+            BufferedReader br = new BufferedReader(fr);
+
+            while((currentLine = br.readLine()) != null){
+                data = currentLine.split(";");
+
+                BicycleType bicycleType = BicycleType.MOUNTAIN;
+                if(data[1].equals("Road")){
+                    bicycleType = BicycleType.ROAD;
+                }
+                boolean available = true;
+
+                if(data[3].equals("false")){
+                    available = false;
+                }
+
+                Bicycle bicycle = new Bicycle(data[0],bicycleType,data[2], available);
+                bicycles.add(bicycle);
+
+            }
+
+            br.close();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return returnBike;
     }
-
-
 
 
 
@@ -446,20 +449,6 @@ public class UiMenu {
         Matcher m = p.matcher(completeName);
         return m.matches();
     }
-
-
-    //TODO DELETE IF I SEE NO NEED TO USE IT
-    /*public boolean userHasDebt(String userDni){
-        for(User user: users){
-            System.out.println(user.getDebt() + " Debt en el método"); //TODO DELETE
-            if(user.getDni().equals("S-" + userDni) || user.getDni().equals("P-" + userDni) && user.getDebt() > 0){
-               return true;
-            } else {
-                return false;
-            }
-        }
-        return false;
-    }*/
 
 
     public User isUserAlreadyRegistered(String dni){
