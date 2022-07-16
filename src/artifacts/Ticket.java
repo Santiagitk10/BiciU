@@ -125,6 +125,10 @@ public class Ticket {
         this.endTime = endTime;
     }
 
+    public void setAmountToPay(double amountToPay) {
+        this.amountToPay = amountToPay;
+    }
+
     public String createTicketCode(){
         int temporalTicketCounter = ticketCodeCounter;
         ticketCodeCounter++;
@@ -135,16 +139,16 @@ public class Ticket {
         System.out.println(
                 "A Ticket was generated\n" +
                         "Code: " + this.ticketCode + "\n" +
-                        "Bicycle: " + this.assignedBicycle.getIdCode() + "\n" +
-                        "User: " + this.user.getDni() + "\n" +
-                        "Name: " + this.user.getCompleteName() + "\n" +
+                        "Bicycle: " + this.bicycleCode + "\n" +
+                        "User: " + this.userId + "\n" +
+                        "Name: " + this.userName + "\n" +
                         "Date: " + this.date + "\n" +
                         "Start time: " + this.startTime + "\n" +
                         "End time: " + this.endTime + "\n" +
                         "Has Helmet: " + this.hasHelmet + "\n" +
                         "Good condition: " + this.isBicycleOk + "\n" +
                         "Status: " + this.ticketStatus + "\n" +
-                        "Amount: " + this.user.getDebt()
+                        "Amount: " + this.amountToPay
         );
     }
 

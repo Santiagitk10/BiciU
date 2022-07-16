@@ -13,7 +13,7 @@ BIC-12;Mountain;blue;false
 BIC-13;Mountain;blue;false
 BIC-14;Mountain;red;false
 BIC-15;Road;yellow;false
-BIC-16;Road;yellow;true
+BIC-16;Road;yellow;false
 BIC-17;Road;red;true
 BIC-18;Mountain;blue;false
 BIC-19;Road;blue;true

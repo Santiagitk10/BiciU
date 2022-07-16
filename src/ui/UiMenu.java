@@ -8,6 +8,7 @@ import user.Rol;
 import user.User;
 
 import java.io.*;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -22,7 +23,8 @@ public class UiMenu {
 
     private List<User> users = dataseeds.seedUsers();
     private List<Bicycle> bicycles = new ArrayList<>();
-    private List<Ticket> tickets = new ArrayList<>();
+   /* private List<Ticket> tickets = new ArrayList<>();*/
+   private List<Ticket> tickets = dataseeds.seedTickets();
 
 
 
@@ -54,11 +56,90 @@ public class UiMenu {
                 case 2:
                     borrowBicycle();
                     break;
+                case 3:
+                    returnBicycle();
             }
 
         } while(option != 6);
 
 
+    }
+
+
+    public void returnBicycle(){
+        System.out.println("Enter ticket ID to return Bicycle");
+        String ticketIdToReturn = reader.scannerText();
+        for(Ticket ticket: tickets){
+            if(ticket.getTicketCode().equals(ticketIdToReturn)){
+                System.out.println("Did the user return the Helmet? Y/N");
+                String helmetReturned = reader.scannerText().toUpperCase();
+                if(!helmetReturned.equals("Y") && !helmetReturned.equals("N")){
+                    System.out.println("Enter only Y or N");
+                    return;
+                }
+                boolean isHelmetOk = true;
+                if(helmetReturned.equals("N")){
+                    isHelmetOk = false;
+                }
+
+                System.out.println("Is the Bicycle in good condition? Y/N");
+                String goodCondition = reader.scannerText().toUpperCase();
+                if(!goodCondition.equals("Y") && !goodCondition.equals("N")){
+                    System.out.println("Enter only Y or N");
+                    return;
+                }
+                boolean isBikeOk = true;
+                if(goodCondition.equals("N")){
+                    isBikeOk = false;
+                }
+
+                for(User user: users){
+                    System.out.println(user.getDni()); //TODO DELETE
+                    System.out.println(ticket.getUserId()); //TODO DELETE
+
+
+                    if(user.getDni().equals(ticket.getUserId())){
+                        System.out.println("Here"); //TODO DELETE
+                        if(!isHelmetOk){
+                            user.increaseDebt(5);
+                        }
+                        if(!isBikeOk){
+                            user.increaseDebt(5);
+                        }
+                        user.decreaseDebt(1);
+
+                        LocalTime finishTime = LocalTime.now();
+
+
+                        long elapsedMinutes = Duration.between(ticket.getStartTime(), finishTime).toMinutes();
+
+                        double timeCharge = Math.floor((elapsedMinutes / 30) * 3 - 3);
+                        if(timeCharge < 0){
+                            timeCharge = 0;
+                        }
+
+                        user.increaseDebt(timeCharge);
+
+                        ticket.setAmountToPay(user.getDebt());
+                        ticket.setHasHelmet(isHelmetOk);
+                        ticket.setBicycleOk(isBikeOk);
+                        ticket.setEndTime(finishTime);
+                        ticket.setTicketStatus(TicketStatus.PENDING);
+
+                        ticket.displayTicketInfo();
+
+                        //TODO ACTUALIZAR BICI STATUS Y ESCRIBIR TICKETS
+                        break;
+
+                    }
+                }
+
+
+                return;
+            }
+        }
+
+        System.out.println("The ticket ID does not exist. Enter a valid ticket ID");
     }
 
     public void createUser(){

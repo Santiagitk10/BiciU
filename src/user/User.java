@@ -36,6 +36,13 @@ public class User {
         this.debt = debt;
     }
 
+    public void increaseDebt(double debtIncrement){
+        this.debt += debtIncrement;
+    }
+
+    public void decreaseDebt(double debtDecrement){
+        this.debt -= debtDecrement;
+    }
 
     public  void printUserRegistration(){
         System.out.println(
