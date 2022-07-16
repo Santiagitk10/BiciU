@@ -24,6 +24,10 @@ public class User {
         return dni;
     }
 
+    public String getCompleteName() {
+        return completeName;
+    }
+
     public double getDebt() {
         return debt;
     }
@@ -31,6 +35,7 @@ public class User {
     public void setDebt(double debt) {
         this.debt = debt;
     }
+
 
     public  void printUserRegistration(){
         System.out.println(

@@ -2,6 +2,7 @@ package ui;
 
 import artifacts.Bicycle;
 import artifacts.BicycleType;
+import artifacts.Ticket;
 import user.Rol;
 import user.User;
 
@@ -18,6 +19,7 @@ public class UiMenu {
 
     private List<User> users = dataseeds.seedUsers();
     private List<Bicycle> bicycles = new ArrayList<>();
+    private List<Ticket> ticket = new ArrayList<>();
 
 
 
@@ -69,7 +71,8 @@ public class UiMenu {
 
         System.out.println("Enter the User´s DNI");
         String dni = reader.scannerText();
-        if(isUserAlreadyRegistered(dni)){
+        User returnedUser = isUserAlreadyRegistered(dni);
+        if(returnedUser != null){
             System.out.println("The User is already registered");
             return;
         }
@@ -98,12 +101,14 @@ public class UiMenu {
     public void borrowBicycle(){
         System.out.println("En the User´s DNI");
         String userDni = reader.scannerText();
-        if(!isUserAlreadyRegistered(userDni)){
+        User returnedUser = isUserAlreadyRegistered(userDni);
+        if(returnedUser == null){
             System.out.println("The User is not registered. Go back and Create it");
             return;
         }
 
-        if(userHasDebt(userDni)){
+
+        if(returnedUser.getDebt() > 0){
             System.out.println("User " + userDni + " has a ticket with debt. " +
                     "Please cancel it and try again.");
             return;
@@ -112,7 +117,15 @@ public class UiMenu {
         System.out.println("Choose a Bicycle Type. Enter M for Mountain or R for Road");
         String chosenBicycleType = reader.scannerText().toUpperCase();
         if(chosenBicycleType.equals("M") || chosenBicycleType.equals("R")){
-            selectBicycle(chosenBicycleType);
+            Bicycle returnedBike = selectBicycle(chosenBicycleType);
+            if(returnedBike != null){
+                //When the user borrows a bike $1 is assigned to his/her debt to prevent the user
+                //to lend a new bike while the current has not been returned. This is reverted upon return of the bike
+                returnedUser.setDebt(1.0);
+                Ticket ticket = new Ticket(returnedBike,returnedUser);
+                ticket.displayTicketInfo();
+
+            }
         } else {
             System.out.println("Only Options M or R are valid");
             return;
@@ -124,7 +137,9 @@ public class UiMenu {
     }
 
 
-    public void selectBicycle(String chosenBicycleType){
+
+
+    public Bicycle selectBicycle(String chosenBicycleType){
 
         bicycles.clear();
         BicycleType requestedType = BicycleType.ROAD;
@@ -135,6 +150,7 @@ public class UiMenu {
         String filePath = "C:\\Users\\SANTIAGO SIERRA\\IdeaProjects\\BiciU\\src\\utilities\\bicycleData.txt";
         String currentLine;
         String data[];
+        Bicycle returnBike = null;
 
         try {
             FileReader fr = new FileReader(filePath);
@@ -158,12 +174,16 @@ public class UiMenu {
 
             }
 
+            br.close();
+
             boolean found = false;
+
             for(Bicycle bike: bicycles){
                 if(bike.getType().equals(requestedType) && bike.isAvailable()){
                     bike.displayBicycleSelection();
                     bike.setAvailable(false);
                     found = true;
+                    returnBike = bike;
                     updateBicycleTxtFile();
                     break;
                 }
@@ -173,18 +193,24 @@ public class UiMenu {
             if(!found){
                 System.out.println("There are no " + requestedType + " bicycles available" +
                         " Try with other type or come back later");
+                return null;
+
             }
 
-            br.close();
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        return returnBike;
     }
 
 
-    public void updateBicycleTxtFile(){
 
+
+
+    public void updateBicycleTxtFile(){
         String filePath = "C:\\Users\\SANTIAGO SIERRA\\IdeaProjects\\BiciU\\src\\utilities\\bicycleData.txt";
 
         try {
@@ -224,9 +250,10 @@ public class UiMenu {
     }
 
 
-
-    public boolean userHasDebt(String userDni){
+    //TODO DELETE IF I SEE NO NEED TO USE IT
+    /*public boolean userHasDebt(String userDni){
         for(User user: users){
+            System.out.println(user.getDebt() + " Debt en el método"); //TODO DELETE
             if(user.getDni().equals("S-" + userDni) || user.getDni().equals("P-" + userDni) && user.getDebt() > 0){
                return true;
             } else {
@@ -234,16 +261,16 @@ public class UiMenu {
             }
         }
         return false;
-    }
+    }*/
 
 
-    public boolean isUserAlreadyRegistered(String dni){
+    public User isUserAlreadyRegistered(String dni){
         for(User user: users){
             if(user.getDni().equals("S-" + dni) || user.getDni().equals("P-" + dni)){
-               return true;
+               return user;
             }
         }
-        return false;
+        return null;
     }
 
 }
