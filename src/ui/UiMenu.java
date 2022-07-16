@@ -1,10 +1,14 @@
 package ui;
 
+import artifacts.Bicycle;
+import artifacts.BicycleType;
 import user.Rol;
 import user.User;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +18,7 @@ public class UiMenu {
     DataSeeds dataseeds = new DataSeeds();
 
     private List<User> users = dataseeds.seedUsers();
+    private List<Bicycle> bicycles = new ArrayList<>();
 
 
 
@@ -105,9 +110,64 @@ public class UiMenu {
             return;
         }
 
+        System.out.println("Choose a Bicycle Type. Enter M for Mountain or R for Road");
+        String chosenBicycleType = reader.scannerText().toUpperCase();
+        if(chosenBicycleType.equals("M") || chosenBicycleType.equals("R")){
+            selectBicycle(chosenBicycleType);
+        } else {
+            System.out.println("Only Options M or R are valid");
+            return;
+        }
+
+
 
 
     }
+
+
+    public void selectBicycle(String chosenBicycleType){
+
+        String requestedType = "";
+        if(chosenBicycleType.equals("M")){
+            requestedType = "Mountain";
+        } else if(chosenBicycleType.equals("R")) {
+            requestedType = "Road";
+        }
+
+        String filePath = "C:\\Users\\SANTIAGO SIERRA\\IdeaProjects\\BiciU\\src\\utilities\\bicycleData.txt";
+        String currentLine;
+        String data[];
+
+        try {
+            FileReader fr = new FileReader(filePath);
+            BufferedReader br = new BufferedReader(fr);
+
+            while((currentLine = br.readLine()) != null){
+                data = currentLine.split(";");
+
+                if(data[1].equals(requestedType) && data[3].equals("true")){
+                    BicycleType bicycleType = BicycleType.MOUNTAIN;
+                    if(data[1].equals("Road")){
+                        bicycleType = BicycleType.ROAD;
+                    }
+
+                    Bicycle bicycle = new Bicycle(data[0],bicycleType,data[2], true);
+                    bicycles.add(bicycle);
+                    bicycle.displayBicycleSelection();
+                    return;
+                }
+            }
+
+            System.out.println("There are no " + requestedType + " bicycles available" +
+                    " Try with other type or come back later");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
 
 
     public boolean isValidUserName(String completeName){
@@ -144,3 +204,10 @@ public class UiMenu {
     }
 
 }
+
+
+
+
+
+
+

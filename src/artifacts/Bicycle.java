@@ -13,4 +13,13 @@ public class Bicycle {
         this.color = color;
         this.isAvailable = isAvailable;
     }
+
+    public void displayBicycleSelection(){
+        System.out.println(
+                "Bicycle Chosen!\n" +
+                        "Code: " + this.idCode + "\n" +
+                        "Type: " + this.type + "\n" +
+                        "Color: " + this.color + "\n"
+        );
+    }
 }
