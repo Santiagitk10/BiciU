@@ -58,9 +58,54 @@ public class UiMenu {
                     break;
                 case 3:
                     returnBicycle();
+                    break;
+                case 4:
+                    payTicket();
+                    break;
             }
 
         } while(option != 6);
+
+    }
+
+
+    public void payTicket(){
+        System.out.println("Enter ticket Number to Pay");
+        String ticktToPay = reader.scannerText();
+        readTicketsFromTxt();
+        for(Ticket ticket: tickets){
+            if(ticket.getTicketCode().equals(ticktToPay)){
+                if(ticket.getTicketStatus() == TicketStatus.OK){
+                    System.out.println("The Ticket has no debt");
+                    ticket.displayTicketInfo();
+                    return;
+                } else {
+                    ticket.displayTicketInfo();
+                    System.out.println("Proceed to Pay? Y/N");
+                    String pay = reader.scannerText().toUpperCase();
+                    if(!pay.equals("Y") && !pay.equals("N")){
+                        System.out.println("Enter only Y or N");
+                        return;
+                    } else if (pay.equals("N")){
+                        return;
+                    }
+
+                    ticket.setTicketStatus(TicketStatus.OK);
+                    ticket.setAmountToPay(0);
+                    for(User user: users){
+                        if(ticket.getUserId().equals(user.getDni())){
+                            user.setDebt(0);
+                            break;
+                        }
+                    }
+                    System.out.println("Ticket Updated!");
+                    ticket.displayTicketInfo();
+                    writeTicketsToTxt();
+                }
+                return;
+            }
+        }
+        System.out.println("The Ticket Does not Exist");
 
     }
 
@@ -70,6 +115,10 @@ public class UiMenu {
         String ticketIdToReturn = reader.scannerText();
         for(Ticket ticket: tickets){
             if(ticket.getTicketCode().equals(ticketIdToReturn)){
+                if(ticket.getTicketStatus() != TicketStatus.ACTIVE){
+                    System.out.println("The bicycle was already returned");
+                    return;
+                }
                 System.out.println("Did the user return the Helmet? Y/N");
                 String helmetReturned = reader.scannerText().toUpperCase();
                 if(!helmetReturned.equals("Y") && !helmetReturned.equals("N")){
@@ -119,7 +168,12 @@ public class UiMenu {
                         ticket.setHasHelmet(isHelmetOk);
                         ticket.setBicycleOk(isBikeOk);
                         ticket.setEndTime(finishTime);
-                        ticket.setTicketStatus(TicketStatus.PENDING);
+                        if(user.getDebt() == 0){
+                            ticket.setTicketStatus(TicketStatus.OK);
+                        } else if(user.getDebt() > 0){
+                            ticket.setTicketStatus(TicketStatus.PENDING);
+                        }
+
 
                         ticket.displayTicketInfo();
 
@@ -269,9 +323,9 @@ public class UiMenu {
 
             }
 
-            /*br.close();
+            br.close();
 
-            boolean found = false;
+            /*boolean found = false;
 
             for(Bicycle bike: bicycles){
                 if(bike.getType().equals(requestedType) && bike.isAvailable()){
@@ -320,7 +374,7 @@ public class UiMenu {
                                 ";" + ticket.getUserId() + ";" + ticket.getUserName() + ";" +
                                 ticket.getDate() + ";" + ticket.getStartTime() + ";" + ticket.getEndTime() +
                                 ";" + ticket.isHasHelmet() + ";" + ticket.isBicycleOk() + ";" + ticket.getTicketStatus() +
-                                ";" + ticket.getUser().getDebt() + "\n");
+                                ";" + ticket.getAmountToPay() + "\n");
                     }
 
                     bw2.close();
