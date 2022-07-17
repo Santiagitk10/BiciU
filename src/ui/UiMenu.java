@@ -12,6 +12,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,6 +35,7 @@ public class UiMenu {
         int option = 0;
 
         do{
+            option = 0;
             System.out.println("""
                 
                 BiciU - Management System
@@ -47,7 +50,13 @@ public class UiMenu {
                 6. Exit
                 """);
 
+            try{
                 option = reader.scannerInt();
+            } catch(Exception e) {
+                System.out.println("Enter Only Numbers");
+            }
+
+
 
             switch (option){
                 case 1:
@@ -62,10 +71,52 @@ public class UiMenu {
                 case 4:
                     payTicket();
                     break;
+                case 5:
+                    displayTickets();
+                    break;
             }
 
         } while(option != 6);
 
+    }
+
+
+    public void displayTickets(){
+        System.out.println(
+                "1. Show All Tickets\n" +
+                        "2. Search by Code\n" +
+                        "3. Search by Status"
+        );
+        int option;
+        try{
+            option = reader.scannerInt();
+        } catch(Exception e) {
+            System.out.println("Enter Only Numbers");
+            return;
+        }
+        if(option < 1 || option > 3 ){
+            System.out.println("Select only of the the three options");
+            return;
+        }
+        switch (option){
+            case 1:
+                readTicketsFromTxt();
+                Collections.sort(tickets, new Comparator<Ticket>(){
+                    public int compare(Ticket t1, Ticket t2){
+                        return Integer.valueOf(t1.getTicketCode().compareTo(t2.getTicketCode()));
+                    }
+
+                });
+                System.out.format("%6s%20s%20s%20s%20s%n", "Code", "UserID", "Name", "Amount ($)", "Status");
+                for(Ticket ticket:tickets){
+                    ticket.printTicketTable();
+                }
+
+                // TODO https://www.youtube.com/watch?v=wzWFQTLn8hI COMPARATOR IMPLEMENTAR Y SOLO ES
+                //TODO LEER EL TEXT FILE, ORGANIZAR, FILTRAR CON UN LOOP Y CREAR UN MÉTODO PARA MOSTRAR EN LA CLASE TICKET.
+                // TODO Y CON ESO TERMINO!
+                break;
+        }
     }
 
 
@@ -75,9 +126,12 @@ public class UiMenu {
         readTicketsFromTxt();
         for(Ticket ticket: tickets){
             if(ticket.getTicketCode().equals(ticktToPay)){
-                if(ticket.getTicketStatus() == TicketStatus.OK){
+                if(ticket.getTicketStatus() == TicketStatus.OK) {
                     System.out.println("The Ticket has no debt");
                     ticket.displayTicketInfo();
+                    return;
+                } else if (ticket.getTicketStatus() == TicketStatus.ACTIVE) {
+                    System.out.println("The Bicycle has not been returned");
                     return;
                 } else {
                     ticket.displayTicketInfo();
@@ -301,7 +355,12 @@ public class UiMenu {
 
                 LocalDate localDate = LocalDate.parse(data[4]);
                 LocalTime startTime = LocalTime.parse(data[5]);
-                LocalTime endTime = LocalTime.parse(data[6]);
+                LocalTime endTime;
+                try{
+                    endTime = LocalTime.parse(data[6]);
+                } catch (Exception e){
+                    endTime = LocalTime.of(0,0,0);
+                }
                 boolean isHelmetOk = true;
                 if(data[7].equals("false")){
                     isHelmetOk = false;

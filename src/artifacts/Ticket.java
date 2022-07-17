@@ -152,6 +152,11 @@ public class Ticket {
         );
     }
 
+    public void printTicketTable(){
+        System.out.format("%6s%20s%20s%20s%20s%n", this.ticketCode, this.userId ,
+                this.userName, String.valueOf(this.amountToPay), this.ticketStatus);
+    }
+
 }
 
 
