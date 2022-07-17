@@ -57,14 +57,6 @@ public class Ticket {
     }
 
 
-    public Bicycle getAssignedBicycle() {
-        return assignedBicycle;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
     public String getTicketCode() {
         return ticketCode;
     }

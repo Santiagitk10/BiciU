@@ -26,8 +26,8 @@ public class UiMenu {
     private List<User> users = dataseeds.seedUsers();
     private List<Bicycle> bicycles = new ArrayList<>();
     private List<Ticket> tickets = new ArrayList<>();
+    //In case tickets need to be seeded for testing
 /*   private List<Ticket> tickets = dataseeds.seedTickets();*/
-
 
 
     public void displayMainMenu(){
@@ -55,7 +55,6 @@ public class UiMenu {
             } catch(Exception e) {
                 System.out.println("Enter Only Numbers");
             }
-
 
 
             switch (option){
@@ -98,34 +97,83 @@ public class UiMenu {
             System.out.println("Select only of the the three options");
             return;
         }
+
+        readTicketsFromTxt();
+        Collections.sort(tickets, new Comparator<Ticket>(){
+            public int compare(Ticket t1, Ticket t2){
+                return Integer.valueOf(t1.getTicketCode().compareTo(t2.getTicketCode()));
+            }
+        });
+
         switch (option){
             case 1:
-                readTicketsFromTxt();
-                Collections.sort(tickets, new Comparator<Ticket>(){
-                    public int compare(Ticket t1, Ticket t2){
-                        return Integer.valueOf(t1.getTicketCode().compareTo(t2.getTicketCode()));
-                    }
-
-                });
                 System.out.format("%6s%20s%20s%20s%20s%n", "Code", "UserID", "Name", "Amount ($)", "Status");
                 for(Ticket ticket:tickets){
                     ticket.printTicketTable();
                 }
 
-                // TODO https://www.youtube.com/watch?v=wzWFQTLn8hI COMPARATOR IMPLEMENTAR Y SOLO ES
-                //TODO LEER EL TEXT FILE, ORGANIZAR, FILTRAR CON UN LOOP Y CREAR UN MÉTODO PARA MOSTRAR EN LA CLASE TICKET.
-                // TODO Y CON ESO TERMINO!
                 break;
+            case 2:
+                System.out.println("Enter the Ticket Code to Search");
+                String ticketCode = reader.scannerText();
+                for(Ticket ticket:tickets){
+                    if(ticket.getTicketCode().equals(ticketCode)){
+                        System.out.format("%6s%20s%20s%20s%20s%n", "Code", "UserID", "Name", "Amount ($)", "Status");
+                        ticket.printTicketTable();
+                        return;
+                    }
+                }
+                System.out.println("The Ticket Code does Not exist");
+                break;
+            case 3:
+                System.out.println("Enter Ticket Status Option to Search\n" +
+                        "1. ACTIVE 2. PENDING 3. OK");
+                int statusOption;
+                try{
+                    statusOption = reader.scannerInt();
+                } catch(Exception e) {
+                    System.out.println("Enter Only Numbers");
+                    return;
+                }
+
+                if(statusOption < 1 || statusOption > 3 ){
+                    System.out.println("Select only of the the three options");
+                    return;
+                }
+
+                TicketStatus ticketStatus = TicketStatus.ACTIVE;
+                switch (statusOption){
+                    case 2:
+                        ticketStatus = TicketStatus.PENDING;
+                        break;
+                    case 3:
+                        ticketStatus = TicketStatus.OK;
+                        break;
+                }
+
+                boolean found = false;
+                System.out.format("%6s%20s%20s%20s%20s%n", "Code", "UserID", "Name", "Amount ($)", "Status");
+                for(Ticket ticket:tickets){
+                    if(ticket.getTicketStatus() == ticketStatus){
+                        ticket.printTicketTable();
+                        found = true;
+                    }
+                }
+                if(!found){
+                    System.out.println("There are no records with the searched Status");
+                }
+                break;
+
         }
     }
 
 
     public void payTicket(){
         System.out.println("Enter ticket Number to Pay");
-        String ticktToPay = reader.scannerText();
+        String ticketToPay = reader.scannerText();
         readTicketsFromTxt();
         for(Ticket ticket: tickets){
-            if(ticket.getTicketCode().equals(ticktToPay)){
+            if(ticket.getTicketCode().equals(ticketToPay)){
                 if(ticket.getTicketStatus() == TicketStatus.OK) {
                     System.out.println("The Ticket has no debt");
                     ticket.displayTicketInfo();
@@ -228,7 +276,6 @@ public class UiMenu {
                             ticket.setTicketStatus(TicketStatus.PENDING);
                         }
 
-
                         ticket.displayTicketInfo();
 
                         for(Bicycle bike: bicycles){
@@ -294,7 +341,7 @@ public class UiMenu {
 
 
     public void borrowBicycle(){
-        System.out.println("En the User´s DNI");
+        System.out.println("Enter the User´s DNI");
         String userDni = reader.scannerText();
         User returnedUser = isUserAlreadyRegistered(userDni);
         if(returnedUser == null){
@@ -314,8 +361,6 @@ public class UiMenu {
         if(chosenBicycleType.equals("M") || chosenBicycleType.equals("R")){
             Bicycle returnedBike = selectBicycle(chosenBicycleType);
             if(returnedBike != null){
-                //When the user borrows a bike $1 is assigned to his/her debt to prevent the user
-                //to lend a new bike while the current has not been returned. This is reverted upon return of the bike
                 returnedUser.setDebt(1.0);
                 Ticket ticket = new Ticket(returnedBike,returnedUser);
                 ticket.displayTicketInfo();
@@ -331,20 +376,12 @@ public class UiMenu {
     }
 
 
-
-
-    //TODO FALTA TESTEARLA CUANDO SE LEAN LOS TICKETS PARA PAGARLOS
     public void readTicketsFromTxt(){
         tickets.clear();
-        /*BicycleType requestedType = BicycleType.ROAD;
-        if(chosenBicycleType.equals("M")){
-            requestedType = BicycleType.MOUNTAIN;
-        }*/
 
         String filePath = "C:\\Users\\SANTIAGO SIERRA\\IdeaProjects\\BiciU\\src\\utilities\\tickets.txt";
         String currentLine;
         String data[];
-/*        Bicycle returnBike = null;*/
 
         try {
             FileReader fr = new FileReader(filePath);
@@ -384,34 +421,10 @@ public class UiMenu {
 
             br.close();
 
-            /*boolean found = false;
-
-            for(Bicycle bike: bicycles){
-                if(bike.getType().equals(requestedType) && bike.isAvailable()){
-                    bike.displayBicycleSelection();
-                    bike.setAvailable(false);
-                    found = true;
-                    returnBike = bike;
-                    updateBicycleTxtFile();
-                    break;
-                }
-
-            }
-
-            if(!found){
-                System.out.println("There are no " + requestedType + " bicycles available" +
-                        " Try with other type or come back later");
-                return null;
-
-            }*/
-
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-      /*  return returnBike;*/
     }
 
 
@@ -421,7 +434,6 @@ public class UiMenu {
 
     public void writeTicketsToTxt(){
         String filePath = "C:\\Users\\SANTIAGO SIERRA\\IdeaProjects\\BiciU\\src\\utilities\\tickets.txt";
-
 
                 try {
                     FileWriter fw2 = new FileWriter(filePath);
@@ -446,8 +458,6 @@ public class UiMenu {
 
 
 
-
-
     public Bicycle selectBicycle(String chosenBicycleType){
 
         BicycleType requestedType = BicycleType.ROAD;
@@ -456,7 +466,6 @@ public class UiMenu {
         }
 
         Bicycle returnBike = null;
-
 
             readBicyclesTxtFile();
 
@@ -480,7 +489,6 @@ public class UiMenu {
                 return null;
 
             }
-
 
         return returnBike;
     }

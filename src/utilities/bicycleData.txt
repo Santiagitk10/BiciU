@@ -1,11 +1,11 @@
 BIC-01;Mountain;red;false
 BIC-02;Road;blue;false
 BIC-03;Mountain;green;false
-BIC-04;Mountain;yellow;true
-BIC-05;Road;purple;true
-BIC-06;Road;red;true
-BIC-07;Mountain;red;true
-BIC-08;Road;blue;true
+BIC-04;Mountain;yellow;false
+BIC-05;Road;purple;false
+BIC-06;Road;red;false
+BIC-07;Mountain;red;false
+BIC-08;Road;blue;false
 BIC-09;Mountain;blue;true
 BIC-10;Road;purple;true
 BIC-11;Road;yellow;true
